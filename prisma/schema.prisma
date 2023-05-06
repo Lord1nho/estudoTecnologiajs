@@ -1,19 +1,198 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  cpf       String   @unique
-  name      String
-  create_at DateTime @default(now())
+model administrador {
+  id_admin                    Int                           @id @default(autoincrement())
+  login                       String                        @db.VarChar(20)
+  usuario                     usuario                       @relation(fields: [login], references: [login], onDelete: Cascade, map: "fk_usuario")
+  administrador_maintain_item administrador_maintain_item[]
 }
 
+model administrador_maintain_item {
+  id_operacao      Int             @id @default(autoincrement())
+  id_administrador Int             @default(autoincrement())
+  id_item          Int             @default(autoincrement())
+  tipo_operacao    tipos_operacoes
+  dia              DateTime        @db.Date
+  administrador    administrador   @relation(fields: [id_administrador], references: [id_admin], onDelete: Cascade, map: "fk_admin")
+  item             item            @relation(fields: [id_item], references: [id_item], onDelete: Cascade, map: "fk_item")
+}
+
+model arma {
+  id_item   Int        @id @default(autoincrement())
+  dano      Int
+  tipo_arma tipos_arma
+  item      item       @relation(fields: [id_item], references: [id_item], onDelete: Cascade, map: "fk_item")
+}
+
+model carrinho {
+  id_carrinho Int          @id @default(autoincrement())
+  id_item     Int          @default(autoincrement())
+  qtd_itens   Int
+  valor       Float        @db.Real
+  login       String?      @db.VarChar(20)
+  status      tipos_status
+  item        item         @relation(fields: [id_item], references: [id_item], onDelete: Cascade, map: "fk_item")
+  usuario     usuario?     @relation(fields: [login], references: [login], onDelete: Cascade, map: "fk_usuario")
+  inventario  inventario[]
+  pagamento   pagamento[]
+}
+
+model cartao {
+  id_cartao   Int          @id @default(autoincrement())
+  nome        String       @db.VarChar(45)
+  numero      String       @db.VarChar(16)
+  cvv         String       @db.VarChar(3)
+  validade    DateTime     @db.Date
+  tipo_cartao tipos_cartao
+  pagamento   pagamento[]
+}
+
+model carteira {
+  login   String  @id @db.VarChar(20)
+  saldo   Float   @default(0) @db.Real
+  usuario usuario @relation(fields: [login], references: [login], onDelete: Cascade, map: "fk_usuario")
+}
+
+model escudo {
+  id_item     Int          @id @default(autoincrement())
+  defesa      Int
+  tipo_escudo tipos_escudo
+  item        item         @relation(fields: [id_item], references: [id_item], onDelete: Cascade, map: "fk_item")
+}
+
+model inventario {
+  id_inventario Int                     @id @default(autoincrement())
+  id_item       Int                     @default(autoincrement())
+  id_carrinho   Int                     @default(autoincrement())
+  id_jogador    Int                     @default(autoincrement())
+  status        tipos_status_inventario
+  carrinho      carrinho                @relation(fields: [id_carrinho], references: [id_carrinho], onDelete: Cascade, map: "fk_carrinho")
+  item          item                    @relation(fields: [id_item], references: [id_item], onDelete: Cascade, map: "fk_item")
+  jogador       jogador                 @relation(fields: [id_jogador], references: [id_jogador], onDelete: Cascade, map: "fk_jogador")
+}
+
+model item {
+  id_item                     Int                           @id @default(autoincrement())
+  id_jogador                  Int                           @default(autoincrement())
+  nome                        String                        @db.VarChar(30)
+  valor                       Float                         @db.Real
+  administrador_maintain_item administrador_maintain_item[]
+  arma                        arma?
+  carrinho                    carrinho[]
+  escudo                      escudo?
+  inventario                  inventario[]
+  jogador                     jogador                       @relation(fields: [id_jogador], references: [id_jogador], onDelete: Cascade, map: "fk_jogador")
+  pet                         pet?
+  skin                        skin?
+}
+
+model jogador {
+  id_jogador Int          @id @default(autoincrement())
+  login      String       @db.VarChar(20)
+  inventario inventario[]
+  item       item[]
+  usuario    usuario      @relation(fields: [login], references: [login], onDelete: Cascade, map: "fk_usuario")
+}
+
+model pagamento {
+  id_pagamento   Int                    @id @default(autoincrement())
+  dia            DateTime               @db.Date
+  valor          Float                  @db.Real
+  id_carrinho    Int                    @default(autoincrement())
+  tipo_pagamento tipos_pagamento
+  status         tipos_status_pagamento
+  id_cartao      Int                    @default(autoincrement())
+  carrinho       carrinho               @relation(fields: [id_carrinho], references: [id_carrinho], onDelete: Cascade, map: "fk_carrinho")
+  cartao         cartao                 @relation(fields: [id_cartao], references: [id_cartao], onDelete: Cascade, map: "fk_cartao")
+}
+
+model pet {
+  id_item  Int        @id @default(autoincrement())
+  tipo_pet tipos_pets
+  item     item       @relation(fields: [id_item], references: [id_item], onDelete: Cascade, map: "fk_item")
+}
+
+model skin {
+  id_item   Int         @id @default(autoincrement())
+  cor       String      @db.VarChar(30)
+  tipo_skin tipos_itens
+  item      item        @relation(fields: [id_item], references: [id_item], onDelete: Cascade, map: "fk_item")
+}
+
+model usuario {
+  login           String          @id @db.VarChar(20)
+  primeiro_nome   String          @db.VarChar(15)
+  sobrenome       String          @db.VarChar(15)
+  email           String          @unique @db.VarChar(45)
+  senha           String          @db.VarChar(30)
+  data_nascimento DateTime        @db.Date
+  telefone        String[]        @db.VarChar
+  administrador   administrador[]
+  carrinho        carrinho[]
+  carteira        carteira?
+  jogador         jogador[]
+}
+
+enum tipos_arma {
+  espada
+  machado
+}
+
+enum tipos_cartao {
+  credito
+  debito
+}
+
+enum tipos_escudo {
+  oval
+  ingles
+}
+
+enum tipos_itens {
+  arma
+  escudo
+  pet
+  skin
+}
+
+enum tipos_operacoes {
+  criar
+  atualizar
+  deletar
+}
+
+enum tipos_pagamento {
+  cartao
+  pix
+  saldo
+}
+
+enum tipos_pets {
+  lobo
+  corvo
+  dragao
+}
+
+enum tipos_status {
+  aberto
+  cancelado
+  finalizado
+}
+
+enum tipos_status_inventario {
+  ativo
+  inativo
+}
+
+enum tipos_status_pagamento {
+  concluido
+  processando
+  falha
+}

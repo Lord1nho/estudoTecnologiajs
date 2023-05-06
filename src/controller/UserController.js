@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export default {
+    /*
     async CreateUser(req, res) {
         const { name, cpf } = req.body;
 
@@ -19,9 +20,10 @@ export default {
         });
         return res.json(user)
     },
+    */
     async findAllUsers(req, res) {
 
-        const users = await prisma.user.findMany()
+        const users = await prisma.administrador.findMany()
         return res.json(users);
     }
 }
