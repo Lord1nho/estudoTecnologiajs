@@ -3,9 +3,9 @@ import UserController from './controller/UserController';
 
 const router = Router();
 
-router.post("/usuario", UserController.CreateUser);
-router.get("/users", UserController.findAllUsers);
+router.post("/usuario/criar", UserController.CreateUser);
+router.get("/usuario/buscar", UserController.ReadUser);
+router.get("/users", UserController.ReadAllUsers);
 
 
-
-export { router } ;
+export { router };

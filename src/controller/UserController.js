@@ -1,52 +1,72 @@
-/**import { PrismaClient } from '@prisma/client';
-
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export default {
-    
-    async CreateUser(req, res) {
-        const { login, 
-            primeiro_nome,
-             sobrenome, 
-             email, 
-             senha, 
-             data_nascimento,
-            telefone } = req.body;
+  // Criar usuario
+  async CreateUser(req, res) {
+    try {
+      const { login, primeiro_nome, sobrenome, email, senha, data_nascimento, telefone} = req.body;
 
-      
-        await prisma.usuario.create({
-            data: {
-                login, 
-                primeiro_nome,
-                sobrenome, 
-                email, 
-                senha, 
-                data_nascimento,
-                telefone
-            },
-        });
-        return res.json(usuario)
-    },
+      let usuario = await prisma.user.findUnique({ where: { login } });
 
-    async findAllUsers(req, res) {
+      if (usuario) {
+        return res.json({ erro: "login ja cadastrado" })
+      }
 
-        const users = await prisma.usuario.findMany()
-        return res.json(users);
+
+      usuario = await prisma.user.create({
+        data: {
+          login,
+          primeiro_nome,
+          sobrenome,
+          email,
+          senha,
+          data_nascimento,
+          telefone,
+        }
+      })
+
+      return res.json(usuario);
+
+    } catch (error) {
+      return res.json({ error });
     }
-}**/
-const express = require('express')
-const { PrismaClient } = require('@prisma/client')
+  },
 
-const prisma = new PrismaClient()
 
-const app = express()
-app.use(express.json())
+  // Listar usuario especifico
+  async ReadUser(req,res){
+    try {
+      const {login} = req.body;
+      let usuario = await prisma.user;findUnique({where: {login}});
 
-// Listar todos os usuários
-app.get('/usuarios', async (req, res) => {
-  const usuarios = await prisma.usuario.findMany()
-  res.json(usuarios)
-})
+      if (usuario) {
+        return res.json(usuario);
+      }
+
+      return res.json({erro: "Usuario nao encontrado"});
+
+    } catch (error) {
+      return res.json({error});
+    }
+  },
+
+
+  // Listar todos os usuarios  
+  async ReadAllUsers(req, res) {
+    try {
+      const users = await prisma.user.findMany();
+      return res.json(users);
+
+    } catch (error) {
+      return res.json({error});
+    }
+  },
+
+
+}
+
+/*
 
 // Criar um novo usuário
 app.post('/usuarios', async (req, res) => {
@@ -94,7 +114,4 @@ app.delete('/usuarios/:login', async (req, res) => {
   })
   res.json(usuario)
 })
-
-app.listen(3000, () =>
-  console.log(`Servidor rodando em http://localhost:3000`)
-)
+*/
