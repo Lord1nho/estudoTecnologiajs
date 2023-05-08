@@ -7,14 +7,14 @@ export default {
     try {
       const { login, primeiro_nome, sobrenome, email, senha, data_nascimento, telefone} = req.body;
 
-      let usuario = await prisma.user.findUnique({ where: { login } });
+      let usuario = await prisma.usuario.findUnique({ where: { login } });
 
       if (usuario) {
         return res.json({ erro: "login ja cadastrado" })
       }
 
 
-      usuario = await prisma.user.create({
+      usuario = await prisma.usuario.create({
         data: {
           login,
           primeiro_nome,
@@ -38,7 +38,7 @@ export default {
   async ReadUser(req,res){
     try {
       const {login} = req.body;
-      let usuario = await prisma.user;findUnique({where: {login}});
+      let usuario = await prisma.usuario;findUnique({where: {login}});
 
       if (usuario) {
         return res.json(usuario);
@@ -55,7 +55,7 @@ export default {
   // Listar todos os usuarios  
   async ReadAllUsers(req, res) {
     try {
-      const users = await prisma.user.findMany();
+      const users = await prisma.usuario.findMany();
       return res.json(users);
 
     } catch (error) {

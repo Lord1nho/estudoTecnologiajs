@@ -4,8 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  //url      = env("DATABASE_URL")
-  url      = "postgresql://postgres:lojaqwer@database-1.c29u862czxca.us-east-1.rds.amazonaws.com:5432/loja?schema=loja"
+  url      = env("DATABASE_URL")
 }
 
 model administrador {
