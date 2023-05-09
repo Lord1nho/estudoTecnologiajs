@@ -41,9 +41,9 @@ CREATE TABLE loja.jogador(
 
 CREATE TABLE loja.item(  
   id_item SERIAL PRIMARY KEY,
-  id_jogador INT NOT NULL,
-  nome VARCHAR(30) NOT NULL,
-  valor REAL NOT NULL,
+  id_jogador INT NOT NULL, -- pode ser nulo
+  nome VARCHAR(30) NOT NULL, 
+  valor REAL NOT NULL,      
   CONSTRAINT ck_valor CHECK (valor >= 0),
   CONSTRAINT fk_jogador FOREIGN KEY (id_jogador) REFERENCES loja.jogador(id_jogador) ON DELETE CASCADE ON UPDATE CASCADE
 );

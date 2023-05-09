@@ -65,34 +65,3 @@ export default {
 
 
 }
-
-/*
-
-// Atualizar um usuário existente
-app.put('/usuarios/:login', async (req, res) => {
-  const usuario = await prisma.usuario.update({
-    where: {
-      login: req.params.login,
-    },
-    data: {
-      primeiro_nome: req.body.primeiro_nome,
-      sobrenome: req.body.sobrenome,
-      email: req.body.email,
-      senha: req.body.senha,
-      data_nascimento: new Date(req.body.data_nascimento),
-      telefone: { set: req.body.telefone },
-    },
-  })
-  res.json(usuario)
-})
-
-// Excluir um usuário existente
-app.delete('/usuarios/:login', async (req, res) => {
-  const usuario = await prisma.usuario.delete({
-    where: {
-      login: req.params.login,
-    },
-  })
-  res.json(usuario)
-})
-*/
