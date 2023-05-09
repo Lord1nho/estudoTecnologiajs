@@ -94,6 +94,8 @@ export default {
 
             return res.json(carrinho);
 
+            
+
 
             // Método que ao modificar status carrinho p/ "finalizado", alterar status no inventário para "ativo"
 /*
