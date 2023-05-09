@@ -68,25 +68,6 @@ export default {
 
 /*
 
-// Criar um novo usuário
-app.post('/usuarios', async (req, res) => {
-  const usuario = await prisma.usuario.create({
-    data: {
-      login: req.body.login,
-      primeiro_nome: req.body.primeiro_nome,
-      sobrenome: req.body.sobrenome,
-      email: req.body.email,
-      senha: req.body.senha,
-      data_nascimento: new Date(req.body.data_nascimento),
-      telefone: { set: req.body.telefone },
-    },
-    include: {
-      carteira: true,
-    },
-  })
-  res.json(usuario)
-})
-
 // Atualizar um usuário existente
 app.put('/usuarios/:login', async (req, res) => {
   const usuario = await prisma.usuario.update({

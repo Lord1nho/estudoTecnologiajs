@@ -16,8 +16,8 @@ model administrador {
 
 model administrador_maintain_item {
   id_operacao      Int             @id @default(autoincrement())
-  id_administrador Int             @default(autoincrement())
-  id_item          Int             @default(autoincrement())
+  id_administrador Int
+  id_item          Int
   tipo_operacao    tipos_operacoes
   dia              DateTime        @db.Date
   administrador    administrador   @relation(fields: [id_administrador], references: [id_admin], onDelete: Cascade, map: "fk_admin")
@@ -25,7 +25,7 @@ model administrador_maintain_item {
 }
 
 model arma {
-  id_item   Int        @id @default(autoincrement())
+  id_item   Int        @id
   dano      Int
   tipo_arma tipos_arma
   item      item       @relation(fields: [id_item], references: [id_item], onDelete: Cascade, map: "fk_item")
@@ -33,7 +33,7 @@ model arma {
 
 model carrinho {
   id_carrinho Int          @id @default(autoincrement())
-  id_item     Int          @default(autoincrement())
+  id_item     Int
   qtd_itens   Int
   valor       Float        @db.Real
   login       String?      @db.VarChar(20)
@@ -61,7 +61,7 @@ model carteira {
 }
 
 model escudo {
-  id_item     Int          @id @default(autoincrement())
+  id_item     Int          @id
   defesa      Int
   tipo_escudo tipos_escudo
   item        item         @relation(fields: [id_item], references: [id_item], onDelete: Cascade, map: "fk_item")
@@ -69,18 +69,18 @@ model escudo {
 
 model inventario {
   id_inventario Int                     @id @default(autoincrement())
-  id_item       Int                     @default(autoincrement())
-  id_carrinho   Int                     @default(autoincrement())
-  id_jogador    Int                     @default(autoincrement())
+  id_item       Int
+  id_carrinho   Int
+  login         String                  @db.VarChar(20)
   status        tipos_status_inventario
   carrinho      carrinho                @relation(fields: [id_carrinho], references: [id_carrinho], onDelete: Cascade, map: "fk_carrinho")
   item          item                    @relation(fields: [id_item], references: [id_item], onDelete: Cascade, map: "fk_item")
-  jogador       jogador                 @relation(fields: [id_jogador], references: [id_jogador], onDelete: Cascade, map: "fk_jogador")
+  usuario       usuario                 @relation(fields: [login], references: [login], onDelete: Cascade, map: "fk_usuario")
 }
 
 model item {
   id_item                     Int                           @id @default(autoincrement())
-  id_jogador                  Int                           @default(autoincrement())
+  id_jogador                  Int
   nome                        String                        @db.VarChar(30)
   valor                       Float                         @db.Real
   administrador_maintain_item administrador_maintain_item[]
@@ -94,33 +94,32 @@ model item {
 }
 
 model jogador {
-  id_jogador Int          @id @default(autoincrement())
-  login      String       @db.VarChar(20)
-  inventario inventario[]
+  id_jogador Int     @id @default(autoincrement())
+  login      String  @db.VarChar(20)
   item       item[]
-  usuario    usuario      @relation(fields: [login], references: [login], onDelete: Cascade, map: "fk_usuario")
+  usuario    usuario @relation(fields: [login], references: [login], onDelete: Cascade, map: "fk_usuario")
 }
 
 model pagamento {
   id_pagamento   Int                    @id @default(autoincrement())
   dia            DateTime               @db.Date
   valor          Float                  @db.Real
-  id_carrinho    Int                    @default(autoincrement())
+  id_carrinho    Int
   tipo_pagamento tipos_pagamento
   status         tipos_status_pagamento
-  id_cartao      Int                    @default(autoincrement())
+  id_cartao      Int?
   carrinho       carrinho               @relation(fields: [id_carrinho], references: [id_carrinho], onDelete: Cascade, map: "fk_carrinho")
-  cartao         cartao                 @relation(fields: [id_cartao], references: [id_cartao], onDelete: Cascade, map: "fk_cartao")
+  cartao         cartao?                @relation(fields: [id_cartao], references: [id_cartao], onDelete: Cascade, map: "fk_cartao")
 }
 
 model pet {
-  id_item  Int        @id @default(autoincrement())
+  id_item  Int        @id
   tipo_pet tipos_pets
   item     item       @relation(fields: [id_item], references: [id_item], onDelete: Cascade, map: "fk_item")
 }
 
 model skin {
-  id_item   Int         @id @default(autoincrement())
+  id_item   Int         @id
   cor       String      @db.VarChar(30)
   tipo_skin tipos_itens
   item      item        @relation(fields: [id_item], references: [id_item], onDelete: Cascade, map: "fk_item")
@@ -137,6 +136,7 @@ model usuario {
   administrador   administrador[]
   carrinho        carrinho[]
   carteira        carteira?
+  inventario      inventario[]
   jogador         jogador[]
 }
 
