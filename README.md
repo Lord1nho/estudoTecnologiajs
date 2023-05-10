@@ -1,8 +1,5 @@
-no arquivo ENV
-coloquem o database de vcs, pra poderem testar
-lembrem de povoar o banco com o script
-após feito isso, coloquem os comandos
-1-npm i (acho q deve precisar tbm)
-2-npx prisma db pull
-3-npx prisma generate
-4- no insomnia criem uma requisição do tipo post, no json: http://localhost:3030/usuario e outra post: http://localhost:3030/users
+O projeto consiste em uma loja virtual de games, onde o usuário poderá comprar itens e verificar o mesmo em seu inventário
+O objetivo é criar um CRUD das tabelas Item, Inventário e Carrinho.
+Fazendo com que um interaja com o outro, mostrando dessa forma o funcionamento do programa
+As tabelas existentes são: Usuário, Carteira, Jogador, Administrador, Inventário, Item, Administrador_maintain_item, Arma, 
+Escudo, Skin, Pet, Carrinho, Pagamento e Cartão
