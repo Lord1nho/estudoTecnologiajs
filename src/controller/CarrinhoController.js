@@ -5,9 +5,12 @@ export default {
     // Criar carrinho
     async CreateCarrinho(req, res) {
       try {
-        const {id_item, qtd_itens, valor, login, status} = req.body;
+        const {id_item, qtd_itens, login, status} = req.body;
   
-  
+         
+        let item = await prisma.item.findUnique({where: {id_item}});
+        let valor = item.valor;
+
         let carrinho = await prisma.carrinho.create({
           data: {
             id_item,
@@ -91,37 +94,8 @@ export default {
                 where: {id_carrinho},
                 data: {id_item, qtd_itens, login, status, valor}
             });
-
-            return res.json(carrinho);
-
             
-
-
-            // Método que ao modificar status carrinho p/ "finalizado", alterar status no inventário para "ativo"
-/*
-            const result = await prisma.carrinho.findMany({
-                join: {
-                  inventario: {
-                    select: {
-                      id_inventario: true
-                    },
-                    where: {
-                      id_carrinho: id_carrinho
-                    },
-                  },
-                },
-                select: {
-                },
-              });
-
-
-            if (carrinho.status == "finalizado") {
-                await prisma.inventario.update({
-                    where: {result},
-                    data: {status: "ativo"}
-                });
-            }
-*/
+            return res.json(carrinho);
 
         } catch (error) {
             return res.json({error});

@@ -41,7 +41,7 @@ CREATE TABLE loja.jogador(
 
 CREATE TABLE loja.item(  
   id_item SERIAL PRIMARY KEY,
-  id_jogador INT NOT NULL, -- pode ser nulo
+  id_jogador INT, 
   nome VARCHAR(30) NOT NULL, 
   valor REAL NOT NULL,      
   CONSTRAINT ck_valor CHECK (valor >= 0),
@@ -145,5 +145,25 @@ CREATE TABLE loja.pagamento(
   CONSTRAINT fk_carrinho FOREIGN KEY(id_carrinho) REFERENCES loja.carrinho(id_carrinho) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT fk_cartao FOREIGN KEY(id_cartao) REFERENCES loja.cartao(id_cartao) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+
+
+CREATE OR REPLACE FUNCTION atualizar_inventario()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE loja.inventario inv
+    SET status = 'ativo'
+    FROM loja.carrinho car
+    WHERE car.id_carrinho = NEW.id_carrinho AND inv.id_carrinho = car.id_carrinho AND car.status = 'finalizado';
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER atualizar_status_inventario
+AFTER UPDATE ON carrinho
+FOR EACH ROW
+WHEN (NEW.status = 'finalizado')
+EXECUTE FUNCTION atualizar_inventario();
 
 
